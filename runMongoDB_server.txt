@@ -1,0 +1,3 @@
+
+go to power shell
+type mongod
