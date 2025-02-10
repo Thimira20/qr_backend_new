@@ -17,13 +17,15 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    console.log("User:", user);
     if (!user || !(await user.comparePassword(password))) {
+      console.log("Password match result:",await user.comparePassword(password))
       return res
         .status(401)
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "4h" });
     res.status(200).json({
       success: true,
       token,
@@ -31,6 +33,7 @@ exports.login = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {

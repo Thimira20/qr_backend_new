@@ -1,4 +1,3 @@
-// middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { JWT_SECRET } = require("../config");
@@ -21,14 +20,19 @@ exports.protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id);
 
-    if (!req.user) {
+    if (!user) {
       return res
         .status(401)
         .json({ success: false, message: "Not authorized, user not found" });
     }
 
+    // Update last active time
+    user.lastActiveAt = new Date();
+    await user.save();
+
+    req.user = user;
     next();
   } catch (error) {
     console.error("Token error:", error);
