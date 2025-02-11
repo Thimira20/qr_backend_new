@@ -72,6 +72,19 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/user-data", userDataRoutes);
 app.use("/api/profile-data", profileDataRoutes);
+app.get("/", (req, res) => {
+  res.json({
+      message: "QR Code Backend API",
+      status: "running",
+      endpoints: {
+          auth: "/api/auth",
+          userData: "/api/user-data",
+          profileData: "/api/profile-data"
+      },
+      version: "1.0.0"
+  });
+});
+
 
 
 // const reactBuildPath = path.join(__dirname, "../../frontend/qr-code2-main-main/build");
