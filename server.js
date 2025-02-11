@@ -58,13 +58,13 @@ app.use("/api/user-data", userDataRoutes);
 app.use("/api/profile-data", profileDataRoutes);
 
 
-const reactBuildPath = path.join(__dirname, "../../frontend/qr-code2-main-main/build");
+// const reactBuildPath = path.join(__dirname, "../../frontend/qr-code2-main-main/build");
 
-app.use(express.static(reactBuildPath));
+// app.use(express.static(reactBuildPath));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(reactBuildPath, "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(reactBuildPath, "index.html"));
+// });
 
 
 app.listen(PORT, () => {
