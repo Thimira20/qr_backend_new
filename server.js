@@ -14,7 +14,7 @@ const bcrypt = require("bcryptjs");
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3001", "https://qr-code-v2-brown.vercel.app/"],
+    origin: ["http://localhost:3001","http://localhost:3000", "https://qr-code-v2-brown.vercel.app/"],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type,Authorization",
     credentials: true,
@@ -37,14 +37,43 @@ app.options('*', (req, res) => {
 });
 
 
-const createAdminUser = async () => {
-  try {
-    // Check if any admin exists
-    const adminExists = await User.findOne({ role: "admin" });
+// const createAdminUser = async () => {
+//   try {
+//     // Check if any admin exists
+//     const adminExists = await User.findOne({ role: "admin" });
 
-    if (!adminExists) {
+//     if (!adminExists) {
       
 
+//       const adminUser = new User({
+//         username: "Admin",
+//         email: "admin@example.com",
+//         password: "1234",
+//         role: "super_admin",
+//       });
+
+//       await adminUser.save();
+//       console.log("✅ Default Admin user created");
+//     } else {
+//       console.log("⚠️ Admin user already exists, skipping creation");
+//     }
+//   } catch (error) {
+//     console.error("❌ Error creating admin:", error);
+//   }
+// };
+const createAdminUser = async () => {
+  try {
+    // Check if admin exists using both username and role
+    const adminExists = await User.findOne({ 
+      $or: [
+        { username: "Admin" },
+        { role: "super_admin" }
+      ]
+    });
+
+    if (!adminExists) {
+      // Hash the password before saving
+      
       const adminUser = new User({
         username: "Admin",
         email: "admin@example.com",
@@ -55,10 +84,30 @@ const createAdminUser = async () => {
       await adminUser.save();
       console.log("✅ Default Admin user created");
     } else {
-      console.log("⚠️ Admin user already exists, skipping creation");
+      // Check if we need to update the admin's role
+      if (adminExists.role !== "super_admin") {
+        await User.findByIdAndUpdate(adminExists._id, { role: "super_admin" });
+        console.log("✅ Existing admin user role updated to super_admin");
+      } else {
+        console.log("⚠️ Admin user already exists with correct role");
+      }
     }
   } catch (error) {
-    console.error("❌ Error creating admin:", error);
+    if (error.code === 11000) {
+      console.log("⚠️ Admin user already exists (duplicate key)");
+      // Try to update the existing user's role if needed
+      try {
+        const existingAdmin = await User.findOne({ username: "Admin" });
+        if (existingAdmin && existingAdmin.role !== "super_admin") {
+          await User.findByIdAndUpdate(existingAdmin._id, { role: "super_admin" });
+          console.log("✅ Existing admin user role updated to super_admin");
+        }
+      } catch (updateError) {
+        console.error("❌ Error updating existing admin:", updateError);
+      }
+    } else {
+      console.error("❌ Error creating admin:", error);
+    }
   }
 };
 
