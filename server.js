@@ -14,7 +14,7 @@ const bcrypt = require("bcryptjs");
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3001","http://localhost:3000", "https://qr-code-v2-brown.vercel.app/"],
+    origin: ["http://localhost:3001","http://localhost:3000", "https://qr-code-v2-brown.vercel.app/","https://qr-code-v2-qz455it5e-thimira20s-projects.vercel.app"],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     allowedHeaders: "Content-Type,Authorization",
     credentials: true,
