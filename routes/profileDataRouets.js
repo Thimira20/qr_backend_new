@@ -9,6 +9,6 @@ router.post("/save-qr-code", saveQrCode);
 router.get("/user-qr-codes/:userId", getQrCodes);
 router.delete("/deleteqr/:qrCodeId", deleteQrCode);
 router.delete("/deleteall/:userId", deleteAllQrCodes);
-router.patch("/favorite/:qrCodeId", toggleFavorite);
+router.post("/favorite/:qrCodeId", toggleFavorite);
 
 module.exports = router;
